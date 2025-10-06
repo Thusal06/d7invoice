@@ -4,8 +4,10 @@ from pydantic import BaseModel
 from PIL import Image, ImageDraw, ImageFont
 import io
 import os
+import sys
 from datetime import datetime
 import json
+import traceback
 
 app = FastAPI()
 
@@ -90,11 +92,23 @@ def draw_checkbox(draw: ImageDraw, x: int, y: int, checked: bool, size: int = 12
 
 def build_image(receipt_data: ReceiptData) -> bytes:
     try:
+        # Debug info
+        print(f"Working directory: {os.getcwd()}")
+        print(f"Files in directory: {os.listdir('.')}")
+
         # Open the template image
         template_path = "D7 INVOICE.png"
-        if not os.path.exists(template_path):
-            template_path = "static/D7 INVOICE.png"
+        print(f"Looking for template at: {template_path}")
 
+        if not os.path.exists(template_path):
+            print(f"Template not found at {template_path}")
+            template_path = "static/D7 INVOICE.png"
+            print(f"Trying alternative path: {template_path}")
+
+        if not os.path.exists(template_path):
+            raise FileNotFoundError(f"Template image not found at {template_path} or D7 INVOICE.png")
+
+        print(f"Template found at: {template_path}")
         img = Image.open(template_path)
         draw = ImageDraw.Draw(img)
 
@@ -175,7 +189,22 @@ async def generate_receipt(receipt_data: ReceiptData):
 
 @app.get("/api/health")
 async def health_check():
-    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
+    try:
+        # Test if template image exists
+        template_exists = os.path.exists("D7 INVOICE.png")
+        return {
+            "status": "healthy",
+            "timestamp": datetime.now().isoformat(),
+            "template_exists": template_exists,
+            "python_version": sys.version,
+            "working_directory": os.getcwd()
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        }
 
 @app.get("/")
 async def root():

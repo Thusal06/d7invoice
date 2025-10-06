@@ -91,7 +91,7 @@ def draw_checkbox(draw: ImageDraw, x: int, y: int, checked: bool, size: int = 12
 def build_image(receipt_data: ReceiptData) -> bytes:
     try:
         # Open the template image
-        template_path = "../D7 INVOICE.png"
+        template_path = "D7 INVOICE.png"
         if not os.path.exists(template_path):
             template_path = "static/D7 INVOICE.png"
 

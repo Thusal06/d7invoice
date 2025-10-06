@@ -116,30 +116,57 @@ async function generateReceipt(formData) {
     hidePreview();
 
     try {
-        const response = await fetch('/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
+        // Simulate API call delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+        // Create a demo receipt image (canvas-based)
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = 600;
+        canvas.height = 450;
+
+        // Draw receipt template (simplified version)
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw header
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(0, 0, canvas.width, 80);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px Arial';
+        ctx.fillText('D7 RECEIPT', 50, 50);
+
+        // Draw receipt details
+        ctx.fillStyle = '#000000';
+        ctx.font = '14px Arial';
+
+        const receiptId = formData.receipt_id || '0091';
+        ctx.fillText(`Receipt ID: ${receiptId}`, 50, 120);
+        ctx.fillText(`Date: ${formData.date}`, 350, 120);
+
+        ctx.fillText(`Received From: ${formData.received_from}`, 50, 160);
+        ctx.fillText(`For: ${formData.for_field}`, 50, 200);
+
+        if (formData.cheque_no) {
+            ctx.fillText(`Cheque No: ${formData.cheque_no}`, 50, 240);
         }
 
-        // Get the receipt ID from response headers if available
-        const contentDisposition = response.headers.get('Content-Disposition');
-        if (contentDisposition) {
-            const match = contentDisposition.match(/receipt_(\d+)\.png/);
-            if (match) {
-                currentReceiptId = match[1];
-            }
-        }
+        ctx.fillText(`Amount: Rs. ${formData.amount}`, 50, 280);
 
-        // Convert response to blob
-        currentReceiptBlob = await response.blob();
+        ctx.fillText(`Payment Method: ${formData.payment_method_cash ? 'Cash' : ''}${formData.payment_method_cheque ? 'Cheque' : ''}`, 50, 320);
+
+        // Add footer
+        ctx.fillStyle = '#2c3e50';
+        ctx.fillRect(0, 380, canvas.width, 70);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '12px Arial';
+        ctx.fillText('Thank you for your business!', 200, 420);
+
+        // Convert canvas to blob
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        currentReceiptBlob = blob;
+        currentReceiptId = receiptId;
 
         // Show preview
         showPreview(currentReceiptBlob);
@@ -232,21 +259,7 @@ function generateNew() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Utility function to check API health
-async function checkApiHealth() {
-    try {
-        const response = await fetch('/api/health');
-        if (!response.ok) {
-            throw new Error('API health check failed');
-        }
-        const data = await response.json();
-        console.log('API Health:', data);
-        return true;
-    } catch (error) {
-        console.error('API Health Check Failed:', error);
-        return false;
-    }
-}
-
-// Check API health on page load
-window.addEventListener('load', checkApiHealth);
+// Demo mode - no API health check needed
+window.addEventListener('load', () => {
+    console.log('D7 Receipt Generator - Demo Mode');
+});

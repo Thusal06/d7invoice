@@ -7,184 +7,308 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Space+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+            <div class="shape shape-3"></div>
+            <div class="shape shape-4"></div>
+            <div class="shape shape-5"></div>
+        </div>
+    </div>
+
     <div class="container">
-        <header>
-            <div class="header-content">
-                <div class="logo">
-                    <h1>D7 Receipt Generator</h1>
-                    <p class="tagline">Professional receipts in seconds</p>
-                </div>
-                <div class="header-stats">
-                    <div class="stat-item">
-                        <span class="stat-number" id="receiptCount">0</span>
-                        <span class="stat-label">Receipts Generated</span>
+        <!-- Navigation Header -->
+        <header class="header">
+            <nav class="navbar">
+                <div class="nav-brand">
+                    <div class="logo-container">
+                        <i class="fas fa-file-invoice-dollar logo-icon"></i>
+                        <div class="logo-text">
+                            <h1>D7 Leos Receipts Generator</h1>
+                            <span class="tagline">Professional Receipts Made Simple</span>
+                        </div>
                     </div>
                 </div>
-            </div>
+                <div class="nav-actions">
+                    <div class="stats-badge">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="stats-content">
+                            <span class="stats-number" id="receiptCount">0</span>
+                            <span class="stats-label">Receipts</span>
+                        </div>
+                    </div>
+                </div>
+            </nav>
         </header>
 
-        <main>
-            <section class="form-section">
-                <div class="section-header">
-                    <h2>Create New Receipt</h2>
-                    <p class="section-description">Fill in the details below to generate a professional receipt</p>
-                </div>
-
-                <form id="receiptForm" class="receipt-form">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="receiptId">
-                                <span class="label-text">Receipt ID</span>
-                                <span class="label-hint">Optional - auto-generated if empty</span>
-                            </label>
-                            <input type="text" id="receiptId" name="receiptId" placeholder="e.g., 0090" class="form-input">
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- Receipt Form -->
+                <section class="form-section">
+                    <div class="section-container">
+                        <div class="section-header">
+                            <div class="header-content">
+                                <i class="fas fa-edit section-icon"></i>
+                                <div>
+                                    <h2>Create New Receipt</h2>
+                                    <p>Fill in the details to generate</p>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="date">
-                                <span class="label-text">Date</span>
-                                <span class="required">*</span>
-                            </label>
-                            <input type="date" id="date" name="date" required class="form-input">
+                        <form id="receiptForm" class="receipt-form">
+                            <div class="form-card">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="receiptId" class="form-label">
+                                            <i class="fas fa-hashtag"></i>
+                                            Receipt ID
+                                            <span class="label-hint">Optional</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" id="receiptId" name="receiptId"
+                                                   placeholder="e.g., 0090" class="form-input">
+                                            <div class="input-icon">
+                                                <i class="fas fa-receipt"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="date" class="form-label">
+                                            <i class="fas fa-calendar"></i>
+                                            Date
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="date" id="date" name="date" required class="form-input">
+                                            <div class="input-icon">
+                                                <i class="fas fa-calendar-alt"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="receivedFrom" class="form-label">
+                                        <i class="fas fa-user"></i>
+                                        Received From
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" id="receivedFrom" name="receivedFrom" required
+                                               placeholder="Enter customer name" class="form-input">
+                                        <div class="input-icon">
+                                            <i class="fas fa-user-circle"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="forField" class="form-label">
+                                        <i class="fas fa-file-alt"></i>
+                                        Description
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="text" id="forField" name="forField" required
+                                               placeholder="What was this payment for?" class="form-input">
+                                        <div class="input-icon">
+                                            <i class="fas fa-edit"></i>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="chequeNo" class="form-label">
+                                            <i class="fas fa-money-check"></i>
+                                            Cheque Number
+                                            <span class="label-hint">If cheque payment</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <input type="text" id="chequeNo" name="chequeNo"
+                                                   placeholder="Enter cheque number" class="form-input">
+                                            <div class="input-icon">
+                                                <i class="fas fa-credit-card"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="amount" class="form-label">
+                                            <i class="fas fa-rupee-sign"></i>
+                                            Amount
+                                            <span class="required">*</span>
+                                        </label>
+                                        <div class="input-group">
+                                            <span class="input-prefix">Rs.</span>
+                                            <input type="number" id="amount" name="amount" step="0.01" required
+                                                   placeholder="0.00" class="form-input">
+                                            <div class="input-icon">
+                                                <i class="fas fa-coins"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="fas fa-credit-card"></i>
+                                        Payment Method
+                                        <span class="required">*</span>
+                                    </label>
+                                    <div class="payment-methods">
+                                        <label class="payment-option">
+                                            <input type="checkbox" id="paymentCash" name="paymentMethod" value="cash">
+                                            <div class="payment-card">
+                                                <div class="payment-content">
+                                                    <div class="payment-title">Cash</div>
+                                                </div>
+                                                <div class="payment-indicator"></div>
+                                            </div>
+                                        </label>
+                                        <label class="payment-option">
+                                            <input type="checkbox" id="paymentCheque" name="paymentMethod" value="cheque">
+                                            <div class="payment-card">
+                                                <div class="payment-content">
+                                                    <div class="payment-title">Cheque</div>
+                                                </div>
+                                                <div class="payment-indicator"></div>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="btn-content">
+                                            <i class="fas fa-magic"></i>
+                                            <span>Generate Receipt</span>
+                                        </span>
+                                        <div class="btn-shine"></div>
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                                        <span class="btn-content">
+                                            <i class="fas fa-redo"></i>
+                                            <span>Reset</span>
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Preview Section -->
+                <section id="previewSection" class="preview-section hidden">
+                    <div class="section-container">
+                        <div class="section-header">
+                            <div class="header-content">
+                                <i class="fas fa-check-circle section-icon success"></i>
+                                <div>
+                                    <h2>Receipt Generated!</h2>
+                                    <p>Ready for download</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="receivedFrom">
-                            <span class="label-text">Received From</span>
-                            <span class="required">*</span>
-                        </label>
-                        <input type="text" id="receivedFrom" name="receivedFrom" required
-                               placeholder="Enter customer name" class="form-input">
-                    </div>
+                        <div class="preview-card">
+                            <div class="preview-container">
+                                <img id="receiptImage" alt="Generated Receipt" class="receipt-image">
+                            </div>
 
-                    <div class="form-group">
-                        <label for="forField">
-                            <span class="label-text">Description</span>
-                            <span class="required">*</span>
-                        </label>
-                        <input type="text" id="forField" name="forField" required
-                               placeholder="What was this payment for?" class="form-input">
-                    </div>
+                            <div class="receipt-details">
+                                <div class="detail-grid">
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-hashtag"></i>
+                                            Receipt ID
+                                        </div>
+                                        <div class="detail-value" id="receiptIdDisplay">-</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">
+                                            <i class="fas fa-clock"></i>
+                                            Generated
+                                        </div>
+                                        <div class="detail-value" id="generatedTime">-</div>
+                                    </div>
+                                </div>
+                            </div>
 
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label for="chequeNo">
-                                <span class="label-text">Cheque Number</span>
-                                <span class="label-hint">Required only if paying by cheque</span>
-                            </label>
-                            <input type="text" id="chequeNo" name="chequeNo"
-                                   placeholder="Enter cheque number" class="form-input">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="amount">
-                                <span class="label-text">Amount (Rs.)</span>
-                                <span class="required">*</span>
-                            </label>
-                            <div class="input-with-prefix">
-                                <span class="input-prefix">Rs.</span>
-                                <input type="number" id="amount" name="amount" step="0.01" required
-                                       placeholder="0.00" class="form-input">
+                            <div class="preview-actions">
+                                <button class="btn btn-primary" onclick="downloadReceipt()">
+                                    <span class="btn-content">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                    </span>
+                                    <div class="btn-shine"></div>
+                                </button>
+                                <button class="btn btn-secondary" onclick="generateNew()">
+                                    <span class="btn-content">
+                                        <i class="fas fa-plus-circle"></i>
+                                        <span>New</span>
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
+                </section>
+            </div>
 
-                    <div class="form-group">
-                        <label>
-                            <span class="label-text">Payment Method</span>
-                            <span class="required">*</span>
-                        </label>
-                        <div class="payment-methods">
-                            <label class="payment-option">
-                                <input type="checkbox" id="paymentCash" name="paymentMethod" value="cash">
-                                <div class="payment-card">
-                                    <div class="payment-icon">💵</div>
-                                    <div class="payment-label">Cash</div>
-                                </div>
-                            </label>
-                            <label class="payment-option">
-                                <input type="checkbox" id="paymentCheque" name="paymentMethod" value="cheque">
-                                <div class="payment-card">
-                                    <div class="payment-icon">🏦</div>
-                                    <div class="payment-label">Cheque</div>
-                                </div>
-                            </label>
+            <!-- Loading State -->
+            <div id="loadingState" class="loading-state hidden">
+                <div class="loading-container">
+                    <div class="loading-animation">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
                         </div>
                     </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <span class="btn-text">Generate Receipt</span>
-                            <span class="btn-icon">📄</span>
-                        </button>
-                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
-                            <span class="btn-text">Reset Form</span>
-                            <span class="btn-icon">🔄</span>
-                        </button>
-                    </div>
-                </form>
-            </section>
-
-            <div id="loadingState" class="loading-state hidden">
-                <div class="loading-content">
-                    <div class="loading-spinner"></div>
-                    <h3>Generating Receipt...</h3>
-                    <p>Please wait while we create your professional receipt</p>
+                    <h3>Creating Your Receipt...</h3>
+                    <p>Please wait while we generate your receipt</p>
                 </div>
             </div>
 
+            <!-- Error Message -->
             <div id="errorMessage" class="error-message hidden">
-                <div class="error-content">
-                    <div class="error-icon">⚠️</div>
-                    <div class="error-text">
-                        <h3>Something went wrong</h3>
+                <div class="error-container">
+                    <div class="error-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="error-content">
+                        <h3>Oops! Something went wrong</h3>
                         <p id="errorText">Please check your input and try again.</p>
                     </div>
+                    <button class="error-close" onclick="hideError()">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
             </div>
-
-            <section id="previewSection" class="preview-section hidden">
-                <div class="section-header">
-                    <h2>Your Receipt is Ready!</h2>
-                    <p class="section-description">Preview and download your professional receipt</p>
-                </div>
-
-                <div class="receipt-preview">
-                    <div class="preview-container">
-                        <img id="receiptImage" alt="Generated Receipt" class="receipt-image">
-                    </div>
-
-                    <div class="receipt-info">
-                        <div class="info-item">
-                            <span class="info-label">Receipt ID:</span>
-                            <span class="info-value" id="receiptIdDisplay">-</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">Generated:</span>
-                            <span class="info-value" id="generatedTime">-</span>
-                        </div>
-                    </div>
-
-                    <div class="preview-actions">
-                        <button class="btn btn-primary btn-large" onclick="downloadReceipt()">
-                            <span class="btn-text">Download Receipt</span>
-                            <span class="btn-icon">⬇️</span>
-                        </button>
-                        <button class="btn btn-secondary btn-large" onclick="generateNew()">
-                            <span class="btn-text">Create Another</span>
-                            <span class="btn-icon">➕</span>
-                        </button>
-                    </div>
-                </div>
-            </section>
         </main>
 
-        <footer>
-            <p>&copy; 2024 D7 Receipt Generator. Built with ❤️ for professionals.</p>
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <div class="footer-brand">
+                        <i class="fas fa-file-invoice-dollar"></i>
+                        <span>D7 Receipt Generator</span>
+                    </div>
+                    <p>&copy; 2025 Built with ❤️ by D7 Leos</p>
+                </div>
+                </div>
+            </div>
         </footer>
     </div>
 

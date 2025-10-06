@@ -21,9 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
     paymentCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', validatePaymentMethods);
     });
-
-    // Check API health on load
-    checkApiHealth();
 });
 
 function loadReceiptCount() {
@@ -111,24 +108,16 @@ function getFormData() {
     const paymentCash = document.getElementById('paymentCash').checked;
     const paymentCheque = document.getElementById('paymentCheque').checked;
 
-    const data = {
+    return {
+        receiptId,
         date,
-        received_from: receivedFrom,
-        for_field: forField,
+        receivedFrom,
+        forField,
+        chequeNo,
         amount,
-        payment_method_cash: paymentCash,
-        payment_method_cheque: paymentCheque
+        paymentCash,
+        paymentCheque
     };
-
-    // Add optional fields
-    if (receiptId) {
-        data.receipt_id = receiptId;
-    }
-    if (chequeNo) {
-        data.cheque_no = chequeNo;
-    }
-
-    return data;
 }
 
 async function generateReceipt(formData) {
@@ -136,34 +125,108 @@ async function generateReceipt(formData) {
     hidePreview();
 
     try {
-        const response = await fetch('/api/generate', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
+        // Simulate brief loading for better UX
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Generate or use provided receipt ID
+        if (formData.receiptId) {
+            currentReceiptId = formData.receiptId;
+        } else {
+            receiptCount++;
+            currentReceiptId = receiptCount.toString().padStart(4, '0');
+        }
+        updateReceiptCountDisplay();
+
+        // Load the D7 INVOICE template
+        const templateImage = new Image();
+        templateImage.crossOrigin = 'anonymous';
+        templateImage.src = 'd7invoice.png';
+
+        await new Promise((resolve, reject) => {
+            templateImage.onload = resolve;
+            templateImage.onerror = reject;
         });
 
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+        // Create canvas with template dimensions
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = templateImage.width;
+        canvas.height = templateImage.height;
+
+        // Draw the template
+        ctx.drawImage(templateImage, 0, 0);
+
+        // Set font for receipt fields (much larger to match template)
+        ctx.fillStyle = '#000000';
+        ctx.font = 'bold 42px Arial';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'middle';
+
+        // Precise field positions based on actual template analysis
+        const fieldPositions = {
+            receiptId: { x: 2135, y: 97 },        // Receipt # field (top right)
+            date: { x: 933, y: 497 },            // Date field (center-right)
+            receivedFrom: { x: 933, y: 556 },     // Received From field
+            forField: { x: 933, y: 616 },         // Description field
+            chequeNo: { x: 933, y: 678 },         // Cheque # field
+            amount: { x: 933, y: 739 },           // Amount field
+            paymentCash: { x: 831, y: 861 },      // Cash checkbox
+            paymentCheque: { x: 1257, y: 861 }    // Cheque checkbox
+        };
+
+        // Draw receipt data on template
+
+        // Receipt ID
+        ctx.fillText(currentReceiptId, fieldPositions.receiptId.x, fieldPositions.receiptId.y);
+
+        // Date
+        ctx.fillText(formData.date, fieldPositions.date.x, fieldPositions.date.y);
+
+        // Received From
+        ctx.fillText(formData.receivedFrom, fieldPositions.receivedFrom.x, fieldPositions.receivedFrom.y);
+
+        // For/Description
+        ctx.fillText(formData.forField, fieldPositions.forField.x, fieldPositions.forField.y);
+
+        // Cheque Number (only if provided)
+        if (formData.chequeNo) {
+            ctx.fillText(formData.chequeNo, fieldPositions.chequeNo.x, fieldPositions.chequeNo.y);
         }
 
-        // Get the receipt ID from response headers if available
-        const contentDisposition = response.headers.get('Content-Disposition');
-        if (contentDisposition) {
-            const match = contentDisposition.match(/receipt_(\d+)\.png/);
-            if (match) {
-                currentReceiptId = match[1];
-            }
+        // Amount with Rs. prefix
+        const amountText = `Rs. ${formData.amount}`;
+        ctx.fillText(amountText, fieldPositions.amount.x, fieldPositions.amount.y);
+
+        // Payment method checkboxes (much larger for better visibility)
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 4;
+
+        const checkboxSize = 45; // Much larger checkboxes (almost double)
+
+        // Cash checkbox
+        ctx.strokeRect(fieldPositions.paymentCash.x, fieldPositions.paymentCash.y - checkboxSize/2, checkboxSize, checkboxSize);
+        if (formData.paymentCash) {
+            // Draw larger checkmark
+            ctx.beginPath();
+            ctx.moveTo(fieldPositions.paymentCash.x + 10, fieldPositions.paymentCash.y);
+            ctx.lineTo(fieldPositions.paymentCash.x + 18, fieldPositions.paymentCash.y + 12);
+            ctx.lineTo(fieldPositions.paymentCash.x + 35, fieldPositions.paymentCash.y - 8);
+            ctx.stroke();
         }
 
-        // Convert response to blob
-        currentReceiptBlob = await response.blob();
+        // Cheque checkbox
+        ctx.strokeRect(fieldPositions.paymentCheque.x, fieldPositions.paymentCheque.y - checkboxSize/2, checkboxSize, checkboxSize);
+        if (formData.paymentCheque) {
+            // Draw larger checkmark
+            ctx.beginPath();
+            ctx.moveTo(fieldPositions.paymentCheque.x + 10, fieldPositions.paymentCheque.y);
+            ctx.lineTo(fieldPositions.paymentCheque.x + 18, fieldPositions.paymentCheque.y + 12);
+            ctx.lineTo(fieldPositions.paymentCheque.x + 35, fieldPositions.paymentCheque.y - 8);
+            ctx.stroke();
+        }
 
-        // Update receipt count
-        receiptCount++;
-        updateReceiptCountDisplay();
+        // Convert canvas to blob
+        currentReceiptBlob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
 
         // Show preview
         showPreview(currentReceiptBlob);
@@ -229,9 +292,7 @@ function downloadReceipt() {
         return;
     }
 
-    const filename = currentReceiptId ?
-        `receipt_${currentReceiptId}.png` :
-        `receipt_${new Date().toISOString().split('T')[0]}.png`;
+    const filename = `receipt_${currentReceiptId}_${new Date().toISOString().split('T')[0]}.png`;
 
     const url = URL.createObjectURL(currentReceiptBlob);
     const a = document.createElement('a');
@@ -266,28 +327,11 @@ function generateNew() {
     resetForm();
 }
 
-// Utility function to check API health
-async function checkApiHealth() {
-    try {
-        const response = await fetch('/api/health');
-        if (!response.ok) {
-            throw new Error('API health check failed');
-        }
-        const data = await response.json();
-        console.log('API Health:', data);
-        return true;
-    } catch (error) {
-        console.error('API Health Check Failed:', error);
-        // Don't show error to user on page load, just log it
-        return false;
-    }
-}
-
-// Auto-hide error messages after 10 seconds
+// Auto-hide error messages after 8 seconds
 document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         hideError();
-    }, 10000);
+    }, 8000);
 });
 
 // Add keyboard shortcuts
@@ -304,18 +348,4 @@ document.addEventListener('keydown', function(event) {
     if (event.key === 'Escape') {
         resetForm();
     }
-});
-
-// Add smooth scrolling for better UX
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
 });

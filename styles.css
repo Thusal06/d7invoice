@@ -224,33 +224,40 @@ body {
     gap: 1rem;
 }
 
-/* ======== COMPACT LAYOUT ======== */
+/* ======== CENTERED LAYOUT ======== */
 .content-wrapper {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    padding: 1rem;
-    min-height: calc(100vh - 80px); /* Minimum height minus header */
-    align-items: start; /* Prevent stretching */
-}
-
-.form-section, .preview-section {
-    background: var(--bg-primary);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: calc(100vh - 80px); /* Minimum height minus header */
 }
 
 .form-section {
-    order: 1;
-    max-height: calc(100vh - 100px); /* Ensure buttons fit */
-    overflow-y: auto;
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px; /* Reasonable width for the form */
 }
 
 .preview-section {
-    order: 2;
+    position: fixed;
+    top: 50%;
+    right: 2rem;
+    transform: translateY(-50%);
+    background: var(--bg-primary);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 400px;
+    max-height: 80vh;
+    z-index: 100;
 }
 
 
@@ -304,14 +311,14 @@ body {
 .form-card {
     background: var(--bg-primary);
     border-radius: 0;
-    padding: 1rem;
+    padding: 2rem;
     box-shadow: none;
     border: none;
     position: relative;
-    overflow: visible; /* Changed from auto to visible */
+    overflow: visible;
     display: flex;
     flex-direction: column;
-    gap: 0.75rem; /* Add gap between form elements */
+    gap: 1rem; /* Larger gap for better spacing */
 }
 
 .form-card::before {

@@ -206,63 +206,63 @@
                         </form>
                     </div>
                 </section>
+            </div>
 
-                <!-- Preview Section -->
-                <section id="previewSection" class="preview-section hidden">
-                    <div class="section-container">
-                        <div class="section-header">
-                            <div class="header-content">
-                                <i class="fas fa-check-circle section-icon success"></i>
-                                <div>
-                                    <h2>Receipt Generated!</h2>
-                                    <p>Ready for download</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="preview-card">
-                            <div class="preview-container">
-                                <img id="receiptImage" alt="Generated Receipt" class="receipt-image">
-                            </div>
-
-                            <div class="receipt-details">
-                                <div class="detail-grid">
-                                    <div class="detail-item">
-                                        <div class="detail-label">
-                                            <i class="fas fa-hashtag"></i>
-                                            Receipt ID
-                                        </div>
-                                        <div class="detail-value" id="receiptIdDisplay">-</div>
-                                    </div>
-                                    <div class="detail-item">
-                                        <div class="detail-label">
-                                            <i class="fas fa-clock"></i>
-                                            Generated
-                                        </div>
-                                        <div class="detail-value" id="generatedTime">-</div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="preview-actions">
-                                <button class="btn btn-primary" onclick="downloadReceipt()">
-                                    <span class="btn-content">
-                                        <i class="fas fa-download"></i>
-                                        <span>Download</span>
-                                    </span>
-                                    <div class="btn-shine"></div>
-                                </button>
-                                <button class="btn btn-secondary" onclick="generateNew()">
-                                    <span class="btn-content">
-                                        <i class="fas fa-plus-circle"></i>
-                                        <span>New</span>
-                                    </span>
-                                </button>
+            <!-- Preview Section (Fixed Position) -->
+            <section id="previewSection" class="preview-section hidden">
+                <div class="section-container">
+                    <div class="section-header">
+                        <div class="header-content">
+                            <i class="fas fa-check-circle section-icon success"></i>
+                            <div>
+                                <h2>Receipt Generated!</h2>
+                                <p>Ready for download</p>
                             </div>
                         </div>
                     </div>
-                </section>
-            </div>
+
+                    <div class="preview-card">
+                        <div class="preview-container">
+                            <img id="receiptImage" alt="Generated Receipt" class="receipt-image">
+                        </div>
+
+                        <div class="receipt-details">
+                            <div class="detail-grid">
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-hashtag"></i>
+                                        Receipt ID
+                                    </div>
+                                    <div class="detail-value" id="receiptIdDisplay">-</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">
+                                        <i class="fas fa-clock"></i>
+                                        Generated
+                                    </div>
+                                    <div class="detail-value" id="generatedTime">-</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-actions">
+                            <button class="btn btn-primary" onclick="downloadReceipt()">
+                                <span class="btn-content">
+                                    <i class="fas fa-download"></i>
+                                    <span>Download</span>
+                                </span>
+                                <div class="btn-shine"></div>
+                            </button>
+                            <button class="btn btn-secondary" onclick="generateNew()">
+                                <span class="btn-content">
+                                    <i class="fas fa-plus-circle"></i>
+                                    <span>New</span>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <!-- Loading State -->
             <div id="loadingState" class="loading-state hidden">

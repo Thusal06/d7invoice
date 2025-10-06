@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/generate.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "api/generate.py"
+    }
+  ],
+  "functions": {
+    "api/generate.py": {
+      "runtime": "python3.9"
+    }
+  }
+}

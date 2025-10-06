@@ -199,8 +199,9 @@ async function generateReceipt(formData) {
             ctx.fillText(formData.chequeNo, fieldPositions.chequeNo.x, fieldPositions.chequeNo.y);
         }
 
-        // Amount with Rs. prefix
-        const amountText = `Rs. ${formData.amount}`;
+        // Amount with LKR format
+        const formattedAmount = parseFloat(formData.amount).toFixed(2);
+        const amountText = `${formattedAmount} LKR`;
         ctx.fillText(amountText, fieldPositions.amount.x, fieldPositions.amount.y);
 
         // Payment method checkboxes (much larger for better visibility)

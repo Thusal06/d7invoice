@@ -407,16 +407,17 @@ body {
 
 .input-prefix {
     position: absolute;
-    left: 1.25rem;
+    left: 1rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--text-secondary);
     font-weight: 600;
     font-family: 'Poppins', sans-serif;
+    z-index: 1;
 }
 
 .input-with-prefix .form-input {
-    padding-left: 3.5rem;
+    padding-left: 2.5rem;
 }
 
 /* ======== PAYMENT METHODS ======== */

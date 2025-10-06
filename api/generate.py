@@ -181,6 +181,9 @@ async def health_check():
 async def root():
     return {"message": "D7 Receipt Generator API", "version": "1.0.0"}
 
+# Vercel serverless function handler
+app.handler = app
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)

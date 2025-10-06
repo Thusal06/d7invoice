@@ -15,10 +15,5 @@
       "src": "/(.*)",
       "dest": "/$1"
     }
-  ],
-  "functions": {
-    "api/generate.py": {
-      "runtime": "python3.9"
-    }
-  }
+  ]
 }

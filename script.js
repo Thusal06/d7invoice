@@ -131,11 +131,17 @@ async function generateReceipt(formData) {
         // Generate or use provided receipt ID
         if (formData.receiptId) {
             currentReceiptId = formData.receiptId;
+            // Update receipt count to match manual ID for future auto-generation
+            const manualId = parseInt(formData.receiptId);
+            if (!isNaN(manualId)) {
+                receiptCount = manualId;
+                updateReceiptCountDisplay();
+            }
         } else {
             receiptCount++;
             currentReceiptId = receiptCount.toString().padStart(4, '0');
+            updateReceiptCountDisplay();
         }
-        updateReceiptCountDisplay();
 
         // Load the D7 INVOICE template
         const templateImage = new Image();

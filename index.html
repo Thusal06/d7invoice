@@ -3,116 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D7 Receipt Generator</title>
+    <title>D7 Receipt Generator - Professional Receipts</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .demo-banner {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            border-radius: 8px;
-        }
-        .demo-banner h3 {
-            margin: 0 0 10px 0;
-        }
-        .demo-banner p {
-            margin: 0;
-            opacity: 0.9;
-        }
-        .demo-image {
-            max-width: 100%;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
-            margin: 20px 0;
-        }
-    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>D7 Receipt Generator</h1>
-            <p>Generate professional receipts instantly</p>
+            <div class="header-content">
+                <div class="logo">
+                    <h1>D7 Receipt Generator</h1>
+                    <p class="tagline">Professional receipts in seconds</p>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-number" id="receiptCount">0</span>
+                        <span class="stat-label">Receipts Generated</span>
+                    </div>
+                </div>
+            </div>
         </header>
 
-        <div class="demo-banner">
-            <h3>🎉 Demo Mode</h3>
-            <p>This is a frontend demo. The receipt generation shows you how it would work.</p>
-        </div>
-
         <main>
-            <form id="receiptForm" class="receipt-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="receiptId">Receipt ID (Optional)</label>
-                        <input type="text" id="receiptId" name="receiptId" placeholder="Auto-generated if empty">
-                    </div>
-                    <div class="form-group">
-                        <label for="date">Date *</label>
-                        <input type="date" id="date" name="date" required>
-                    </div>
+            <section class="form-section">
+                <div class="section-header">
+                    <h2>Create New Receipt</h2>
+                    <p class="section-description">Fill in the details below to generate a professional receipt</p>
                 </div>
 
-                <div class="form-group">
-                    <label for="receivedFrom">Received From *</label>
-                    <input type="text" id="receivedFrom" name="receivedFrom" required placeholder="Enter name">
-                </div>
+                <form id="receiptForm" class="receipt-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="receiptId">
+                                <span class="label-text">Receipt ID</span>
+                                <span class="label-hint">Optional - auto-generated if empty</span>
+                            </label>
+                            <input type="text" id="receiptId" name="receiptId" placeholder="e.g., 0090" class="form-input">
+                        </div>
 
-                <div class="form-group">
-                    <label for="forField">For/Description *</label>
-                    <input type="text" id="forField" name="forField" required placeholder="Enter description">
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="chequeNo">Cheque Number</label>
-                        <input type="text" id="chequeNo" name="chequeNo" placeholder="Enter cheque number">
+                        <div class="form-group">
+                            <label for="date">
+                                <span class="label-text">Date</span>
+                                <span class="required">*</span>
+                            </label>
+                            <input type="date" id="date" name="date" required class="form-input">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="amount">Amount (Rs.) *</label>
-                        <input type="number" id="amount" name="amount" step="0.01" required placeholder="0.00">
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label>Payment Method *</label>
-                    <div class="payment-methods">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="paymentCash" name="paymentMethod" value="cash">
-                            <span class="checkmark"></span>
-                            Cash
+                    <div class="form-group">
+                        <label for="receivedFrom">
+                            <span class="label-text">Received From</span>
+                            <span class="required">*</span>
                         </label>
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="paymentCheque" name="paymentMethod" value="cheque">
-                            <span class="checkmark"></span>
-                            Cheque
-                        </label>
+                        <input type="text" id="receivedFrom" name="receivedFrom" required
+                               placeholder="Enter customer name" class="form-input">
                     </div>
-                </div>
 
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Generate Receipt</button>
-                    <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
-                </div>
-            </form>
+                    <div class="form-group">
+                        <label for="forField">
+                            <span class="label-text">Description</span>
+                            <span class="required">*</span>
+                        </label>
+                        <input type="text" id="forField" name="forField" required
+                               placeholder="What was this payment for?" class="form-input">
+                    </div>
 
-            <div id="loadingSpinner" class="loading hidden">
-                <div class="spinner"></div>
-                <p>Generating receipt...</p>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="chequeNo">
+                                <span class="label-text">Cheque Number</span>
+                                <span class="label-hint">Required only if paying by cheque</span>
+                            </label>
+                            <input type="text" id="chequeNo" name="chequeNo"
+                                   placeholder="Enter cheque number" class="form-input">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="amount">
+                                <span class="label-text">Amount (Rs.)</span>
+                                <span class="required">*</span>
+                            </label>
+                            <div class="input-with-prefix">
+                                <span class="input-prefix">Rs.</span>
+                                <input type="number" id="amount" name="amount" step="0.01" required
+                                       placeholder="0.00" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <span class="label-text">Payment Method</span>
+                            <span class="required">*</span>
+                        </label>
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="checkbox" id="paymentCash" name="paymentMethod" value="cash">
+                                <div class="payment-card">
+                                    <div class="payment-icon">💵</div>
+                                    <div class="payment-label">Cash</div>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="checkbox" id="paymentCheque" name="paymentMethod" value="cheque">
+                                <div class="payment-card">
+                                    <div class="payment-icon">🏦</div>
+                                    <div class="payment-label">Cheque</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <span class="btn-text">Generate Receipt</span>
+                            <span class="btn-icon">📄</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                            <span class="btn-text">Reset Form</span>
+                            <span class="btn-icon">🔄</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <div id="loadingState" class="loading-state hidden">
+                <div class="loading-content">
+                    <div class="loading-spinner"></div>
+                    <h3>Generating Receipt...</h3>
+                    <p>Please wait while we create your professional receipt</p>
+                </div>
             </div>
 
-            <div id="errorMessage" class="error-message hidden"></div>
-
-            <div id="previewSection" class="preview-section hidden">
-                <h3>Receipt Preview</h3>
-                <img id="receiptImage" alt="Generated Receipt">
-                <div class="preview-actions">
-                    <button class="btn btn-primary" onclick="downloadReceipt()">Download Receipt</button>
-                    <button class="btn btn-secondary" onclick="generateNew()">Generate Another</button>
+            <div id="errorMessage" class="error-message hidden">
+                <div class="error-content">
+                    <div class="error-icon">⚠️</div>
+                    <div class="error-text">
+                        <h3>Something went wrong</h3>
+                        <p id="errorText">Please check your input and try again.</p>
+                    </div>
                 </div>
             </div>
+
+            <section id="previewSection" class="preview-section hidden">
+                <div class="section-header">
+                    <h2>Your Receipt is Ready!</h2>
+                    <p class="section-description">Preview and download your professional receipt</p>
+                </div>
+
+                <div class="receipt-preview">
+                    <div class="preview-container">
+                        <img id="receiptImage" alt="Generated Receipt" class="receipt-image">
+                    </div>
+
+                    <div class="receipt-info">
+                        <div class="info-item">
+                            <span class="info-label">Receipt ID:</span>
+                            <span class="info-value" id="receiptIdDisplay">-</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Generated:</span>
+                            <span class="info-value" id="generatedTime">-</span>
+                        </div>
+                    </div>
+
+                    <div class="preview-actions">
+                        <button class="btn btn-primary btn-large" onclick="downloadReceipt()">
+                            <span class="btn-text">Download Receipt</span>
+                            <span class="btn-icon">⬇️</span>
+                        </button>
+                        <button class="btn btn-secondary btn-large" onclick="generateNew()">
+                            <span class="btn-text">Create Another</span>
+                            <span class="btn-icon">➕</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
         </main>
+
+        <footer>
+            <p>&copy; 2024 D7 Receipt Generator. Built with ❤️ for professionals.</p>
+        </footer>
     </div>
 
     <script src="script.js"></script>

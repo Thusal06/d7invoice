@@ -1,5 +1,6 @@
 let currentReceiptBlob = null;
 let currentReceiptId = null;
+let receiptCount = 0;
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
@@ -7,6 +8,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const dateInput = document.getElementById('date');
     const today = new Date().toISOString().split('T')[0];
     dateInput.value = today;
+
+    // Load receipt count from localStorage
+    loadReceiptCount();
 
     // Add form submit handler
     const form = document.getElementById('receiptForm');
@@ -17,7 +21,23 @@ document.addEventListener('DOMContentLoaded', function() {
     paymentCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', validatePaymentMethods);
     });
+
+    // Check API health on load
+    checkApiHealth();
 });
+
+function loadReceiptCount() {
+    const saved = localStorage.getItem('receiptCount');
+    if (saved) {
+        receiptCount = parseInt(saved);
+        updateReceiptCountDisplay();
+    }
+}
+
+function updateReceiptCountDisplay() {
+    document.getElementById('receiptCount').textContent = receiptCount;
+    localStorage.setItem('receiptCount', receiptCount.toString());
+}
 
 function handleFormSubmit(event) {
     event.preventDefault();
@@ -116,57 +136,34 @@ async function generateReceipt(formData) {
     hidePreview();
 
     try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        const response = await fetch('/api/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
 
-        // Create a demo receipt image (canvas-based)
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = 600;
-        canvas.height = 450;
-
-        // Draw receipt template (simplified version)
-        ctx.fillStyle = '#ffffff';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        // Draw header
-        ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(0, 0, canvas.width, 80);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 24px Arial';
-        ctx.fillText('D7 RECEIPT', 50, 50);
-
-        // Draw receipt details
-        ctx.fillStyle = '#000000';
-        ctx.font = '14px Arial';
-
-        const receiptId = formData.receipt_id || '0091';
-        ctx.fillText(`Receipt ID: ${receiptId}`, 50, 120);
-        ctx.fillText(`Date: ${formData.date}`, 350, 120);
-
-        ctx.fillText(`Received From: ${formData.received_from}`, 50, 160);
-        ctx.fillText(`For: ${formData.for_field}`, 50, 200);
-
-        if (formData.cheque_no) {
-            ctx.fillText(`Cheque No: ${formData.cheque_no}`, 50, 240);
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
         }
 
-        ctx.fillText(`Amount: Rs. ${formData.amount}`, 50, 280);
+        // Get the receipt ID from response headers if available
+        const contentDisposition = response.headers.get('Content-Disposition');
+        if (contentDisposition) {
+            const match = contentDisposition.match(/receipt_(\d+)\.png/);
+            if (match) {
+                currentReceiptId = match[1];
+            }
+        }
 
-        ctx.fillText(`Payment Method: ${formData.payment_method_cash ? 'Cash' : ''}${formData.payment_method_cheque ? 'Cheque' : ''}`, 50, 320);
+        // Convert response to blob
+        currentReceiptBlob = await response.blob();
 
-        // Add footer
-        ctx.fillStyle = '#2c3e50';
-        ctx.fillRect(0, 380, canvas.width, 70);
-        ctx.fillStyle = '#ffffff';
-        ctx.font = '12px Arial';
-        ctx.fillText('Thank you for your business!', 200, 420);
-
-        // Convert canvas to blob
-        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
-        currentReceiptBlob = blob;
-        currentReceiptId = receiptId;
+        // Update receipt count
+        receiptCount++;
+        updateReceiptCountDisplay();
 
         // Show preview
         showPreview(currentReceiptBlob);
@@ -180,18 +177,19 @@ async function generateReceipt(formData) {
 }
 
 function showLoading() {
-    document.getElementById('loadingSpinner').classList.remove('hidden');
+    document.getElementById('loadingState').classList.remove('hidden');
     document.querySelector('.btn-primary').disabled = true;
 }
 
 function hideLoading() {
-    document.getElementById('loadingSpinner').classList.add('hidden');
+    document.getElementById('loadingState').classList.add('hidden');
     document.querySelector('.btn-primary').disabled = false;
 }
 
 function showError(message) {
     const errorElement = document.getElementById('errorMessage');
-    errorElement.textContent = message;
+    const errorText = document.getElementById('errorText');
+    errorText.textContent = message;
     errorElement.classList.remove('hidden');
 }
 
@@ -202,15 +200,23 @@ function hideError() {
 function showPreview(blob) {
     const previewSection = document.getElementById('previewSection');
     const receiptImage = document.getElementById('receiptImage');
+    const receiptIdDisplay = document.getElementById('receiptIdDisplay');
+    const generatedTime = document.getElementById('generatedTime');
 
     // Create object URL for the blob
     const imageUrl = URL.createObjectURL(blob);
     receiptImage.src = imageUrl;
 
+    // Update receipt info
+    if (currentReceiptId) {
+        receiptIdDisplay.textContent = currentReceiptId;
+    }
+    generatedTime.textContent = new Date().toLocaleString();
+
     previewSection.classList.remove('hidden');
 
     // Scroll to preview
-    previewSection.scrollIntoView({ behavior: 'smooth' });
+    previewSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function hidePreview() {
@@ -251,15 +257,65 @@ function resetForm() {
     // Reset receipt data
     currentReceiptBlob = null;
     currentReceiptId = null;
-}
 
-function generateNew() {
-    resetForm();
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-// Demo mode - no API health check needed
-window.addEventListener('load', () => {
-    console.log('D7 Receipt Generator - Demo Mode');
+function generateNew() {
+    resetForm();
+}
+
+// Utility function to check API health
+async function checkApiHealth() {
+    try {
+        const response = await fetch('/api/health');
+        if (!response.ok) {
+            throw new Error('API health check failed');
+        }
+        const data = await response.json();
+        console.log('API Health:', data);
+        return true;
+    } catch (error) {
+        console.error('API Health Check Failed:', error);
+        // Don't show error to user on page load, just log it
+        return false;
+    }
+}
+
+// Auto-hide error messages after 10 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(() => {
+        hideError();
+    }, 10000);
+});
+
+// Add keyboard shortcuts
+document.addEventListener('keydown', function(event) {
+    // Ctrl/Cmd + Enter to submit form
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+        const form = document.getElementById('receiptForm');
+        if (form) {
+            form.dispatchEvent(new Event('submit'));
+        }
+    }
+
+    // Escape to reset form
+    if (event.key === 'Escape') {
+        resetForm();
+    }
+});
+
+// Add smooth scrolling for better UX
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
 });
